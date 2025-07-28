@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Insurance LLM Agent</title>
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header>
       <h1>Insurance LLM Agent</h1>
       <nav>
-        <a href="/">Home</a>
-        <a href="/upload">Upload Docs</a>
+        <a href="#query">Home</a>
+        <a href="#upload">Upload Docs</a>
       </nav>
     </header>
 
@@ -22,6 +22,7 @@
           <textarea id="queryInput" placeholder="Enter your insurance-related question..." rows="4"></textarea>
           <button type="submit">Submit Query</button>
         </form>
+        <div id="loader" class="hidden">Processing...</div>
         <pre id="resultDisplay"></pre>
       </section>
 
@@ -40,17 +41,25 @@
       const uploadBtn = document.getElementById('uploadBtn');
       const documentInput = document.getElementById('documentInput');
       const uploadMessage = document.getElementById('uploadMessage');
+      const loader = document.getElementById('loader');
 
       queryForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        loader.classList.remove('hidden');
         const query = queryInput.value;
-        const res = await fetch('http://localhost:8000/query', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query })
-        });
-        const data = await res.json();
-        resultDisplay.textContent = JSON.stringify(data, null, 2);
+        try {
+          const res = await fetch('http://localhost:8000/query', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+          });
+          const data = await res.json();
+          resultDisplay.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          resultDisplay.textContent = 'Error: Unable to fetch response';
+        } finally {
+          loader.classList.add('hidden');
+        }
       });
 
       uploadBtn.addEventListener('click', async () => {
@@ -58,12 +67,16 @@
         if (!file) return;
         const formData = new FormData();
         formData.append('file', file);
-        const res = await fetch('http://localhost:8000/documents/upload', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        uploadMessage.textContent = data.message || 'Upload successful';
+        try {
+          const res = await fetch('http://localhost:8000/documents/upload', {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          uploadMessage.textContent = data.message || 'Upload successful';
+        } catch (err) {
+          uploadMessage.textContent = 'Upload failed. Please try again.';
+        }
       });
     </script>
   </body>

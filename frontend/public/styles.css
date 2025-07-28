@@ -34,7 +34,9 @@ main {
   margin: 0 auto;
 }
 
-input, button, textarea {
+input,
+button,
+textarea {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
@@ -53,4 +55,21 @@ button {
 
 button:hover {
   background-color: #1565c0;
+}
+
+#loader {
+  padding: 1rem;
+  background: #fffbe6;
+  border: 1px solid #ffeb3b;
+  border-radius: 8px;
+  margin-top: 1rem;
+  display: none;
+}
+
+#loader:not(.hidden) {
+  display: block;
+}
+
+.hidden {
+  display: none;
 }
