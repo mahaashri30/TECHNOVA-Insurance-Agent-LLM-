@@ -33,51 +33,7 @@
         <p id="uploadMessage"></p>
       </section>
     </main>
-
-    <script>
-      const queryForm = document.getElementById('queryForm');
-      const queryInput = document.getElementById('queryInput');
-      const resultDisplay = document.getElementById('resultDisplay');
-      const uploadBtn = document.getElementById('uploadBtn');
-      const documentInput = document.getElementById('documentInput');
-      const uploadMessage = document.getElementById('uploadMessage');
-      const loader = document.getElementById('loader');
-
-      queryForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        loader.classList.remove('hidden');
-        const query = queryInput.value;
-        try {
-          const res = await fetch('http://localhost:8000/query', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query })
-          });
-          const data = await res.json();
-          resultDisplay.textContent = JSON.stringify(data, null, 2);
-        } catch (err) {
-          resultDisplay.textContent = 'Error: Unable to fetch response';
-        } finally {
-          loader.classList.add('hidden');
-        }
-      });
-
-      uploadBtn.addEventListener('click', async () => {
-        const file = documentInput.files[0];
-        if (!file) return;
-        const formData = new FormData();
-        formData.append('file', file);
-        try {
-          const res = await fetch('http://localhost:8000/documents/upload', {
-            method: 'POST',
-            body: formData
-          });
-          const data = await res.json();
-          uploadMessage.textContent = data.message || 'Upload successful';
-        } catch (err) {
-          uploadMessage.textContent = 'Upload failed. Please try again.';
-        }
-      });
-    </script>
+    <script src="/script.js"></script>
+    
   </body>
 </html>
